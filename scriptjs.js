@@ -47,7 +47,7 @@ const saveUserform = (event)=>{
     const name = document.getElementById('name').value;    
     const email = document.getElementById('email').value;    
     const password = document.getElementById('password').value;    
-    const acceptedterms = document.getElementById('acceptTerms').check;
+    const acceptedterms = document.getElementById('acceptTerms').checked;
     const dob = document.getElementById('dob').value;
     const entry = {
         name,
