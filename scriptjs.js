@@ -1,67 +1,105 @@
-let userForm = document.getElementById("user-form");
-const email1 = document.getElementById('email');
-email1.addEventListener('input',()=>validate(email1));
-function validate(element){
-    if(element.validity.typeMismatch){
-        element.setCustomValidity("this email not in perfect format...");
-        element.reportValidity();
+function validateAge(today, dobobj) {
+  var age = today.getFullYear() - dobobj.getFullYear();
+  var m = today.getMonth() - dobobj.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dobobj.getDate())) {
+    age--;
+  }
+  return age;
 }
-    else{
-        element.setCustomValidity("");
-}
-}
-const reciveEntries = ()=>{
-    let entries1 = localStorage.getItem('entries');
-    if (entries1){
-        entries1 = JSON.parse(entries1);
-    }
-    else{
-        entries1=[];
-    }
-    return entries1;
-}
-let local_entries = reciveEntries();
-const diplay = () =>{
-    const entries1 = reciveEntries();
-    const tablerows= entries1.map((x)=>{
-        const namecell = `<td>${x.name}</td>`;
-        const emailcell = `<td>${x.email}</td>`;
-        const passcell = `<td>${x.password}</td>`;
-        const dobcell = `<td>${x.dob}</td>`;
-        const termscell = `<td>${x.acceptedterms}</td>`;
-        const row = `<tr>${namecell} ${emailcell} ${passcell} ${dobcell} ${termscell}`
-        return row;
-    }).join('\n')
-    const table = `<table style="border:solid 4px">
-    <tr>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Password</th>
-    <th>Dob</th>
-    <th>Accepted terms?</th></tr>${tablerows}</table>`;
-    let details = document.getElementById('entrytbale');
-    details.innerHTML = table;
-}
-const saveUserform = (event)=>{
-    event.preventDefault();
-    const name = document.getElementById('name').value;    
-    const email = document.getElementById('email').value;    
-    const password = document.getElementById('password').value;    
-    const acceptedterms = document.getElementById('acceptTerms').checked;
-    const dob = document.getElementById('dob').value;
-    const entry = {
-        name,
-        email,
-        password,
-        acceptedterms,
-        dob
-    }
-    local_entries.push(entry);
-    localStorage.setItem("entries", JSON.stringify(local_entries));
-    diplay();
+let dobelement = document.getElementById("dob");
+dobelement.addEventListener("change", () => {
+  let [y,m,d] = document.getElementById("dob").value.split("-");
+  let dob = new Date(y,m,d);
+  let Today = new Date();
+  age = validateAge(Today, dob);
+  if (age < 18 || age > 55) {
+    dobelement.setCustomValidity("age must lie in 18 and 55 years!!!");
+ 
+    return;
+  } else {
+    dobelement.setCustomValidity("");
+  }
+});
+let form = document.getElementById("user-form");
 
+const retriveEntries = () => {
+  let entries = localStorage.getItem("userEntry");
+
+  if (entries) {
+    entries = JSON.parse(entries);
+  } else {
+    entries = [];
+  }
+  return entries;
+};
+
+let Entries = retriveEntries();
+
+const displayEntries = () => {
+  const entries = retriveEntries();
+
+  const tablerows = entries
+    .map((entry) => {
+      const name = `<td class="td">${entry.name}</td>`;
+      const email = `<td class="td">${entry.email}</td>`;
+      const password = `<td class="td">${entry.password}</td>`;
+      const dob = `<td class="td">${entry.dob}</td>`;
+      const acceptTerms = `<td class="td">${entry.acceptTerms}</td>`;
+
+      const row = `<tr>${name} ${email} ${password} ${dob} ${acceptTerms}</tr>`;
+      return row;
+    })
+    .join("\n");
+
+  let tableDiv = document.getElementById("entrytbale");
+
+  tableDiv.innerHTML = `<table>
+  <tr>
+    <th class="th">Name</th>
+    <th class="th">Email</th>
+    <th class="th">Password</th>
+    <th class="th">Dob</th>
+    <th class="th">Accepted terms?</th>
+  </tr>
+    ${tablerows}
+  </table>`;
+};
+
+// const saveUserFrom = () => {
+const saveUserFrom = (event) => {
+  event.preventDefault();
+
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let password = document.getElementById("password").value;
+  let dob = document.getElementById("dob").value;
+  let acceptTerms = document.getElementById("acceptTerms").checked;
+
+  let entry_obj = {
+    name,
+    email,
+    password,
+    dob,
+    acceptTerms,
+  };
+
+  Entries.push(entry_obj);
+
+  localStorage.setItem("userEntry", JSON.stringify(Entries));
+
+  displayEntries();
+};
+
+form.addEventListener("submit", saveUserFrom);
+
+displayEntries();
+const email = document.getElementById("email");
+email.addEventListener("input", () => validate(email));
+function validate(ele) {
+  if (ele.validity.typeMismatch) {
+    ele.setCustomValidity("The Email is not in the right format!!!");
+    ele.reportValidity();
+  } else {
+    ele.setCustomValidity("");
+  }
 }
-
-
-userForm.addEventListener("submit",saveUserform);
-diplay();
