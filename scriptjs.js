@@ -42,7 +42,7 @@ const displayEntries = () => {
     .map((entry) => {
       const name = `<td>${entry.name}</td>`;
       const email = `<td>${entry.email}</td>`;
-      const password = `<td">${entry.password}</td>`;
+      const password = `<td>${entry.password}</td>`;
       const dob = `<td>${entry.dob}</td>`;
       const acceptTerms = `<td>${entry.acceptTerms}</td>`;
 
